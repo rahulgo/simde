@@ -388,6 +388,19 @@
 #  define SIMDE_VECTORIZE_ALIGNED(a)
 #endif
 
+/* GCC and ICC both have problem with pragma omp simd on a loop where
+ * each iteration operates on a vector (for example, implementing a
+ * 256-bit AVX function using 2 128-bit SSE functions).  For GCC it is
+ * a performance issue, whereas ICC generates bad code.  This macro is
+ * intended to be used instead of SIMDE_VECTORIZE in such cases. */
+#if \
+    !defined(HEDLEY_GCC_VERSION) && \
+    !defined(HEDLEY_INTEL_VERSION)
+  #define SIMDE_META_VECTORIZE SIMDE_VECTORIZE
+#else
+  #define SIMDE_META_VECTORIZE
+#endif
+
 #define SIMDE_MASK_NZ_(v, mask) (((v) & (mask)) | !((v) & (mask)))
 
 /* Intended for checking coverage, you should never use this in
