@@ -76,9 +76,7 @@ simde_x_mm_gf2p8matrix_multiply_epi64_epi8 (simde__m128i x, simde__m128i A) {
     a = simde_mm_shuffle_epi8(A, simde_x_mm_set_epu64x(UINT64_C(0x08090A0B0C0D0E0F), UINT64_C(0x0001020304050607)));
     r = zero;
 
-    #if !defined(__INTEL_COMPILER)
-      SIMDE_VECTORIZE
-    #endif
+    SIMDE_META_VECTORIZE
     for (int i = 0 ; i < 8 ; i++) {
       p = simde_mm_insert_epi16(zero, simde_mm_movemask_epi8(a), 1);
       p = simde_mm_shuffle_epi8(p, simde_mm_sign_epi8(byte_select, x));
@@ -97,9 +95,7 @@ simde_x_mm_gf2p8matrix_multiply_epi64_epi8 (simde__m128i x, simde__m128i A) {
     const uint64_t mask = UINT64_C(0x0102040810204080);
     uint64_t q;
 
-    #if !defined(__INTEL_COMPILER)
-      SIMDE_VECTORIZE
-    #endif
+    SIMDE_META_VECTORIZE
     for (size_t i = 0 ; i < (sizeof(r_.u8) / sizeof(r_.u8[0])) ; i++) {
       q = A_.u64[i / 8];
       q = simde_endian_bswap64_le(A_.u64[i / 8]);
@@ -130,9 +126,7 @@ simde_x_mm256_gf2p8matrix_multiply_epi64_epi8 (simde__m256i x, simde__m256i A) {
     a = simde_mm256_shuffle_epi8(A, simde_mm256_broadcastsi128_si256(simde_x_mm_set_epu64x(UINT64_C(0x08090A0B0C0D0E0F), UINT64_C(0x0001020304050607))));
     r = simde_mm256_setzero_si256();
 
-    #if !defined(__INTEL_COMPILER)
-      SIMDE_VECTORIZE
-    #endif
+    SIMDE_META_VECTORIZE
     for (int i = 0 ; i < 8 ; i++) {
       p = simde_mm256_set1_epi32(simde_mm256_movemask_epi8(a));
       p = simde_mm256_shuffle_epi8(p, byte_select);
@@ -149,9 +143,7 @@ simde_x_mm256_gf2p8matrix_multiply_epi64_epi8 (simde__m256i x, simde__m256i A) {
       x_ = simde__m256i_to_private(x),
       A_ = simde__m256i_to_private(A);
 
-    #if !defined(__INTEL_COMPILER)
-      SIMDE_VECTORIZE
-    #endif
+    SIMDE_META_VECTORIZE
     for (size_t i = 0 ; i < (sizeof(r_.m128i) / sizeof(r_.m128i[0])) ; i++) {
       r_.m128i[i] = simde_x_mm_gf2p8matrix_multiply_epi64_epi8(x_.m128i[i], A_.m128i[i]);
     }
@@ -170,9 +162,7 @@ simde_x_mm512_gf2p8matrix_multiply_epi64_epi8 (simde__m512i x, simde__m512i A) {
     a = simde_mm512_shuffle_epi8(A, simde_mm512_broadcast_i32x4(simde_x_mm_set_epu64x(UINT64_C(0x08090A0B0C0D0E0F), UINT64_C(0x0001020304050607))));
     r = simde_mm512_setzero_si512();
 
-    #if !defined(__INTEL_COMPILER)
-      SIMDE_VECTORIZE
-    #endif
+    SIMDE_META_VECTORIZE
     for (int i = 0 ; i < 8 ; i++) {
       p = simde_mm512_set1_epi64(HEDLEY_STATIC_CAST(int64_t, simde_mm512_movepi8_mask(a)));
       p = simde_mm512_maskz_shuffle_epi8(simde_mm512_movepi8_mask(x), p, byte_select);
@@ -188,9 +178,7 @@ simde_x_mm512_gf2p8matrix_multiply_epi64_epi8 (simde__m512i x, simde__m512i A) {
       x_ = simde__m512i_to_private(x),
       A_ = simde__m512i_to_private(A);
 
-    #if !defined(__INTEL_COMPILER)
-      SIMDE_VECTORIZE
-    #endif
+    SIMDE_META_VECTORIZE
     for (size_t i = 0 ; i < (sizeof(r_.m256i) / sizeof(r_.m256i[0])) ; i++) {
       r_.m256i[i] = simde_x_mm256_gf2p8matrix_multiply_epi64_epi8(x_.m256i[i], A_.m256i[i]);
     }
@@ -212,9 +200,7 @@ simde_x_mm_gf2p8inverse_epi8 (simde__m128i x) {
     x = simde_mm_xor_si128(x, test);
     r = simde_mm_shuffle_epi8(simde_x_gf2p8inverse_lut.m128i[0], masked_x);
 
-    #if !defined(__INTEL_COMPILER)
-      SIMDE_VECTORIZE
-    #endif
+    SIMDE_META_VECTORIZE
     for (int i = 1 ; i < 16 ; i++) {
       t = simde_mm_shuffle_epi8(simde_x_gf2p8inverse_lut.m128i[i], masked_x);
       test = simde_mm_add_epi8(test, sixteens);
@@ -228,9 +214,7 @@ simde_x_mm_gf2p8inverse_epi8 (simde__m128i x) {
       r_,
       x_ = simde__m128i_to_private(x);
 
-    #if !defined(__INTEL_COMPILER)
-      SIMDE_VECTORIZE
-    #endif
+    SIMDE_META_VECTORIZE
     for (size_t i = 0 ; i < (sizeof(r_.u8) / sizeof(r_.u8[0])) ; i++) {
       r_.u8[i] = simde_x_gf2p8inverse_lut.u8[x_.u8[i]];
     }
@@ -252,9 +236,7 @@ simde_x_mm256_gf2p8inverse_epi8 (simde__m256i x) {
     x = simde_mm256_xor_si256(x, test);
     r = simde_mm256_shuffle_epi8(simde_mm256_broadcastsi128_si256(simde_x_gf2p8inverse_lut.m128i[0]), masked_x);
 
-    #if !defined(__INTEL_COMPILER)
-      SIMDE_VECTORIZE
-    #endif
+    SIMDE_META_VECTORIZE
     for (int i = 1 ; i < 16 ; i++) {
       t = simde_mm256_shuffle_epi8(simde_mm256_broadcastsi128_si256(simde_x_gf2p8inverse_lut.m128i[i]), masked_x);
       test = simde_mm256_add_epi8(test, sixteens);
@@ -268,9 +250,7 @@ simde_x_mm256_gf2p8inverse_epi8 (simde__m256i x) {
       r_,
       x_ = simde__m256i_to_private(x);
 
-    #if !defined(__INTEL_COMPILER)
-      SIMDE_VECTORIZE
-    #endif
+    SIMDE_META_VECTORIZE
     for (size_t i = 0 ; i < (sizeof(r_.m128i) / sizeof(r_.m128i[0])) ; i++) {
       r_.m128i[i] = simde_x_mm_gf2p8inverse_epi8(x_.m128i[i]);
     }
@@ -293,9 +273,7 @@ simde_x_mm512_gf2p8inverse_epi8 (simde__m512i x) {
     r = simde_mm512_shuffle_epi8(simde_mm512_broadcast_i32x4(simde_x_gf2p8inverse_lut.m128i[0]), masked_x);
     test = sixteens;
 
-    #if !defined(__INTEL_COMPILER)
-      SIMDE_VECTORIZE
-    #endif
+    SIMDE_META_VECTORIZE
     for (int i = 1 ; i < 16 ; i++) {
       r = simde_mm512_mask_shuffle_epi8(r, simde_mm512_cmpge_epu8_mask(x, test), simde_mm512_broadcast_i32x4(simde_x_gf2p8inverse_lut.m128i[i]), masked_x);
       test = simde_mm512_add_epi8(test, sixteens);
@@ -307,9 +285,7 @@ simde_x_mm512_gf2p8inverse_epi8 (simde__m512i x) {
       r_,
       x_ = simde__m512i_to_private(x);
 
-    #if !defined(__INTEL_COMPILER)
-      SIMDE_VECTORIZE
-    #endif
+    SIMDE_META_VECTORIZE
     for (size_t i = 0 ; i < (sizeof(r_.m256i) / sizeof(r_.m256i[0])) ; i++) {
       r_.m256i[i] = simde_x_mm256_gf2p8inverse_epi8(x_.m256i[i]);
     }
@@ -539,9 +515,7 @@ simde__m128i simde_mm_gf2p8mul_epi8 (simde__m128i a, simde__m128i b) {
 
     r = zero;
 
-    #if !defined(__INTEL_COMPILER)
-      SIMDE_VECTORIZE
-    #endif
+    SIMDE_META_VECTORIZE
     for (int i = 0 ; i < 8 ; i++) {
       t = simde_mm_and_si128(b, ones);
       t = simde_mm_cmpeq_epi8(t, ones);
@@ -564,9 +538,7 @@ simde__m128i simde_mm_gf2p8mul_epi8 (simde__m128i a, simde__m128i b) {
     /* The field generator polynomial is 0x11B but we drop the 0x100 bit */
     const uint8_t fgp = 0x1B;
 
-    #if !defined(__INTEL_COMPILER)
-      SIMDE_VECTORIZE
-    #endif
+    SIMDE_META_VECTORIZE
     for (size_t i = 0 ; i < (sizeof(r_.u8) / sizeof(r_.u8[0])) ; i++) {
       r_.u8[i] = 0;
       while ((a_.u8[i] != 0) && (b_.u8[i] != 0)) {
@@ -606,9 +578,7 @@ simde_mm256_gf2p8mul_epi8 (simde__m256i a, simde__m256i b) {
 
     r = zero;
 
-    #if !defined(__INTEL_COMPILER)
-      SIMDE_VECTORIZE
-    #endif
+    SIMDE_META_VECTORIZE
     for (int i = 0 ; i < 8 ; i++) {
       t = simde_mm256_and_si256(b, ones);
       t = simde_mm256_cmpeq_epi8(t, ones);
@@ -628,9 +598,7 @@ simde_mm256_gf2p8mul_epi8 (simde__m256i a, simde__m256i b) {
       a_ = simde__m256i_to_private(a),
       b_ = simde__m256i_to_private(b);
 
-    #if !defined(__INTEL_COMPILER)
-      SIMDE_VECTORIZE
-    #endif
+    SIMDE_META_VECTORIZE
     for (size_t i = 0 ; i < (sizeof(r_.m128i) / sizeof(r_.m128i[0])) ; i++) {
       r_.m128i[i] = simde_mm_gf2p8mul_epi8(a_.m128i[i], b_.m128i[i]);
     }
@@ -660,9 +628,7 @@ simde_mm512_gf2p8mul_epi8 (simde__m512i a, simde__m512i b) {
 
     r = zero;
 
-    #if !defined(__INTEL_COMPILER)
-      SIMDE_VECTORIZE
-    #endif
+    SIMDE_META_VECTORIZE
     for (int i = 0 ; i < 8 ; i++) {
       t = simde_mm512_and_si512(b, ones);
       m = simde_mm512_cmpeq_epi8_mask(t, ones);
@@ -682,9 +648,7 @@ simde_mm512_gf2p8mul_epi8 (simde__m512i a, simde__m512i b) {
       a_ = simde__m512i_to_private(a),
       b_ = simde__m512i_to_private(b);
 
-    #if !defined(__INTEL_COMPILER)
-      SIMDE_VECTORIZE
-    #endif
+    SIMDE_META_VECTORIZE
     for (size_t i = 0 ; i < (sizeof(r_.m128i) / sizeof(r_.m128i[0])) ; i++) {
       r_.m128i[i] = simde_mm_gf2p8mul_epi8(a_.m128i[i], b_.m128i[i]);
     }
